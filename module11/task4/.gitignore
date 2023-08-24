@@ -1,0 +1,4 @@
+SkillBoxModules/
+*.exe
+.vscode/
+tests.cpp
