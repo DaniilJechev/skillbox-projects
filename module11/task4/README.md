@@ -1,2 +1,2 @@
 #special app
-simple problem
+no simple
