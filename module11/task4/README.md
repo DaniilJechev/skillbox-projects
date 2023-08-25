@@ -1,2 +1,1 @@
-#special app
-simple problem
+"Hello world!"
