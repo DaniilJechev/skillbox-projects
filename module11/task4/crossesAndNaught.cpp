@@ -113,5 +113,4 @@ int main()
     }else if (!winnerCheck (gameField, 'X') && !winnerCheck(gameField,'O') ){
         std::cout << "Nobody";
     }
-    std::cout << "hi";
 }
