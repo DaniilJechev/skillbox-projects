@@ -1,4 +1,4 @@
 SkillBoxModules/
 *.exe
 .vscode/
-tests.cpp
+test.cpp
