@@ -12,10 +12,9 @@ void print (float arr[], int size){      //print function
     }
 }
 
-void sort(float arr[], int size)   //swap functinon
+void heapSwap(float arr[], int size, int i)   //swap functinon
 {
-    if (size == 1) return ;
-    int i = size - 1;
+    if ((size < 1) || (i < 0) ) return ;
     while (i * 2 + 1 > size - 1 ) i--;
     if (allowedSwap(size, i)){
         if (arr[i*2 + 1] >= arr[i*2 + 2] && arr[i*2 + 1] > arr[i]){
@@ -24,14 +23,24 @@ void sort(float arr[], int size)   //swap functinon
             std::swap(arr[i], arr[i*2 + 2]);
         }
     }else if (arr[i] < arr[i*2 + 1]) std::swap(arr[i], arr[i*2 + 1]);
-    sort(arr, i);
+    
+    heapSwap(arr, size - 1, i - 1 );
+}
+
+void sort (float arr[], int size)
+{
+    int k = size;
+    for (int i = 0; i < k - 1; i ++){
+        heapSwap(arr,size, size);
+        size--;
+    }
 }
 
 int main()
 {
     float arr[] = {1.6, 1.5, 4.4, 2.2 ,3.25, 1.7};
     int size = sizeof(arr)/sizeof(arr[0]);
-    std::cout << "Sorted arrat : \n" ;
-    sort (arr,size);
+    sort (arr, size);
+    std::cout << "\nSorted array : \n" ;
     print (arr, size - 1);
 }
