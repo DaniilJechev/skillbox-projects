@@ -1,7 +1,7 @@
 #include <iostream>
 
-int DublicatFind(int const numbers[], int x, int size)
-{
+int DublicatFind(int const numbers[], int x, int const size)     //That function find dublicate in arr
+{                                                                //Asymptotics = O(n)
     int arrSumm = 0, usualSumm = 0;
     for (int i = 0; i < size - 1; i ++){
         arrSumm += numbers[i];
