@@ -2,7 +2,7 @@
 #include <vector>
 #include <iomanip>
 
-int maxSizeInArr (std::vector<std::vector<int>> const vec)
+int maxSizeInArr (std::vector<std::vector<int>> const& vec)
 {
     int maxN = vec[0][0];
     for (int i = 0; i < vec.size(); i ++){
@@ -13,7 +13,7 @@ int maxSizeInArr (std::vector<std::vector<int>> const vec)
     return std::to_string(maxN).size() + 1;
 }
 
-void resultPrint (std::vector<std::vector<int>> const vec)
+void resultPrint (std::vector<std::vector<int>> const& vec)
 {
     for (int i = 0; i < vec.size(); i ++){
         for (int j = 0; j < vec[0].size(); j ++){
@@ -23,7 +23,7 @@ void resultPrint (std::vector<std::vector<int>> const vec)
     }
 }
 
-bool isEqual (std::vector<std::vector<int>> const firstM, std::vector<std::vector<int>> const secondM )
+bool isEqual (std::vector<std::vector<int>> const& firstM, std::vector<std::vector<int>> const& secondM )
 {
     for (int i = 0; i < firstM.size(); i ++){
         for (int j = 0; j < firstM[0].size(); j ++){
