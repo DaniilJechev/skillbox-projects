@@ -13,7 +13,7 @@ void resultPrint (std::vector<std::vector<bool>> const& vec)
     for (int i = 0; i < vec.size(); i ++){
         for (int j = 0; j < vec[0].size(); j ++){
             std::cout << std::setw(2);
-            if (vec[i][j] == true){
+            if (vec[i][j]){
                 std::cout << 'O';
             } else std::cout << 'X';
         }
@@ -25,10 +25,10 @@ bool isWhole (std::vector<std::vector<bool>> const& film)
 {
     for (int i = 0; i < film.size(); i ++){
         for (int j = 0; j < film[0].size(); j ++){
-            if (film[i][j] == true) return true;
+            if (film[i][j]) return false;
         }
     }
-    return false;
+    return true;
 }
 
 bool isValid (int const& x, int const& y)
@@ -70,7 +70,7 @@ int main()
 
         popPrint(burst(x1, y1, x2, y2, film));
         resultPrint(film);
-        if(!isWhole) break;
+        if(isWhole(film)) break;
         x1 = x2 = -1;
     }
     std::cout << "\nEnd!";
