@@ -1,21 +1,27 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <windows.h>
 
-void battlePrint (std::vector<std::vector<int>> const &field, std::string const )   //field display during battle
+void battlePrint (std::vector<std::vector<int>> const &field)   //field display during battle
 {
-    for (int i ; i < field.size() ; i ++){
-        for (int j = 0; j < field[0].size(); j ++){
+    for (int i = 0; i < field.size() - 1; i ++){
+        for (int j = 0; j < field[0].size() - 1; j ++){
+            if (j == 1) j ++;
+            if (i == 1) i ++;
             if (i == 0 && j == 0){
-                std::cout << std::setw(4) << ' ';
-            } else if (i == 0) {
-                std::cout << std::setw(3) << field[i][j];
-            }else if (j == 0) {
+                std::cout << std::setw(5) << ' ';
+            } else if (j == 0) {
+                std::cout << std::setw(3) << field[i][j];                  //-1 = miss
+            }else if (i == 0) {                                            //-2 = hit
                 std::cout << std::setw(3) << char(field[i][j] + 64);
-            }else if (field[i][j] == 0) {
+            }else if (field[i][j] != -2 && field[i][j] != -1) {
                 std::cout << std::setw(3) << '.';
-            }else std::cout << std::setw(3) << field[i][j];
-            if (j == field[0].size() - 1 && i == 0){
+            }else if (field[i][j] == -1) {
+                std::cout << std::setw(3) << 'o';
+            }else std::cout << std::setw(3) << 'x';
+
+            if (j == field[0].size() - 2 && i == 0){
                 std::cout << "\n      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
             }else if (j == 0 && i > 0) std::cout <<" ┃";
                    
@@ -68,15 +74,27 @@ bool isAllowed(std::vector<std::vector<int>> &field,int &size, int &x1, int &y1,
           || ((x1 == x2) && ( abs(y1 - y2) == size))
           || ((y1 != y2) && (x1 != x2)
           || (x1 == x2 && y1 == y2))) return false;
-    
-    if (y2 < y1) std::swap(y1,y2);
-    if (x2 < x1) std::swap(x1,x2);
+
+        if (y1 == y2 && (x2 - x1) != size - 1 && x2 < x1 ){
+            x2 -= (size - 1) + (x2 - x1);
+        }else if (x1 == x2 && (y2 - y1) != size - 1 && y2 < y1) y2 -= (size - 1) + (y2 - y1);
+
+        if (y2 < y1 && x1 == x2){
+            std::swap(y1,y2);
+        }else if (x2 < x1 && y1 == y2) std::swap(x1,x2);
+
+        if (((y1 == y2) && (x2 - x1 + 1) > size)
+          || ((x1 == x2) && ( (y2 - y1 + 1) > size))
+          || ((y1 != y2) && (x1 != x2))
+          || (x1 == x2 && y1 == y2)) return false;
 
     if (y1 == y2){
+        if (x1 + size >= field.size()) return false;
         for (int i = x1; i < x2 + 1; i ++){
             if (circleCheck(field,i, y1 )) return false;
         }
-    }else if ( x1 == x2 ){ 
+    }else if ( x1 == x2 ){
+        if (y1 + size >= field.size()) return false;
         for (int i = y1; i < y2 + 1; i ++){
             if (circleCheck(field, x1, i)) return false;
         }
@@ -90,7 +108,7 @@ void build (std::vector<std::vector<int>> &field,int &size, int &x1, int &y1, in
         for (int i = x1; i < x1 + size; i ++){
             field[y1][i] = size;
         }
-    }else for (int i = y1; i < y2 + size - 1; i ++){
+    }else for (int i = y1; i < y1 + size; i ++){
             field[i][x1] = size;
         }
 }
@@ -107,18 +125,19 @@ bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, s
 {
     int x1, y1 = 0, x2, y2;
     char letter;
-    if ( size < 6 ){
+    if ( size < 5 ){
     std::cout <<"You need to arrange " << count << " ship with the size of " << size << " cell.\n(input coordinates)\n";
     placeMentPrint(field);
 
     for (;count > 0; count--){
         std::cout << "Input first coordinates ";
         std::cin >> letter >> y1;
-        x1 = letter - 63;
+        x1 = letter - 64;
         std::cout << "Input second coordinates ";
         std::cin >> letter >> y2;
-        x2 = letter - 63;
+        x2 = letter - 64;
         x1 ++, x2 ++, y1 ++, y2 ++;
+
         if (isAllowed(field, size, x1, y1, x2, y2)){
             build(field, size ,x1, y1, x2, y2);
         }else {
@@ -190,21 +209,31 @@ int main ()
     std::cin >> p1;
     std::cout << "Enter second player name ";
     std::cin >> p2;
+    int x, y;
 
     designations(field_1);
     designations(field_2);
     
-    std::cout << "Hello, this is a sea battle.\nFirst, you need to arrange your ships for two players.\n\n";
+    std::cout << "Hello, this is a sea battle.\nFirst, you need to arrange your ships for two players.\n";
+    std::cout << "Instructions: when entering coordinates, first enter the letter, after the number.\n\n";
 
     for (;;){
     if (placeMent(field_1, p1)) break;
     }
 
+    Sleep(3000);
+    
     for (;;){
     if (placeMent(field_2, p2)) break;
     }
 
+    std::cout <<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n      Lets start!\n";
     for (;;){
-        std::cout <<"\n\n\n\n\n\n\nLets start!";
+        battlePrint(field_1);
+        std::cout << "\nEnter x, y: ";
+        std::cin >> x >> y;
+        if (field_1[y][x] >= 1){
+            field_1[y][x] = -2;
+        }else field_1[y][x] = -1;
     }
 }
