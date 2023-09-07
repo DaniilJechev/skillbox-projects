@@ -141,18 +141,7 @@ bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, s
             build(field, size ,x1, y1, x2, y2);
         }else {
             std::cout << "Error, try again!!!\n";
-            std::cout << "If you want to delete ALL YOUR FIELD and start building ships again, enter 'yes'.\nOtherwise, enter any other character:\n";
-            std::string comand;
-            std::cin >> comand;
-            if (comand == "yes"){
-                for (int i = 2 ; i < field.size() - 1 ; i ++){
-                    for (int j = 2; j < field[0].size() - 1; j ++){
-                        field[i][j] = 0;
-                    }
-                }
-                return false;
-            }
-            shipBuilding(field, size, count, player);
+            Sleep(650) , shipBuilding(field, size, count, player);
         }
         placeMentPrint(field);
     }
@@ -288,7 +277,7 @@ bool shipDeath (std::vector<std::vector<int>> &field, int &x, int &y)  //will ch
 
     }else if (direction(field, x, y) == "notMoving"){
         if (field[y + 1][x] == -2){
-            while (direction(field, x, y) != "notMoving") direction(field, x, y);
+            while (direction(field, x, y) != "notMoving") direction(field, x, y);     //Problem part of function
         for (i = 0;;i++){
             if (field[y + i][x] == -1 || field[y + i][x] == 0) break;
             if (field[y + i][x] != -2) return false;
@@ -343,12 +332,12 @@ void move (std::vector<std::vector<int>> &field_1, std::string const p2)
             }else{
                 Sleep(650);
                 std::cout << "You sank the ship! And can move again.\n";
-                Sleep(800), move(field_1,p2);
+                Sleep(800), move(field_1,p2); //problem with recursion after input A1
             }
         }else{         //100% hit and ship size >= 2
             }if (startSize != 1){
                 if (shipDeath(field_1, x, y)){     
-                    Sleep(650);     
+                    Sleep(650);                             //after kill the ship if u miss next move u can move again (error need to be fixed)
                     if (winCheck(field_1)){ 
                         battlePrint(field_1);
                         std::cout << p2 << " Win!";
