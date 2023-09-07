@@ -89,12 +89,12 @@ bool isAllowed(std::vector<std::vector<int>> &field,int &size, int &x1, int &y1,
 
     if (y1 == y2){
         if (x1 + size >= field.size()) return false;
-        for (int i = x1; i < x2 + 1; i ++){
+        for (int i = x1; i < x1 + size ; i ++){
             if (circleCheck(field,i, y1 )) return false;
         }
     }else if ( x1 == x2 ){
         if (y1 + size >= field.size()) return false;
-        for (int i = y1; i < y2 + 1; i ++){
+        for (int i = y1; i < y1 + size ; i ++){
             if (circleCheck(field, x1, i)) return false;
         }
     }
@@ -193,11 +193,13 @@ bool shipBuilding_start (std::vector<std::vector<int>> &field, int &count, std::
 bool placeMent (std::vector<std::vector<int>> &field, std::string const player)         //This function places ships (using helper functions)
 {
     int count = 4;    //This variable shows the number of ships of a certain size not yet built.
-    std::cout << "           You are a "<< player <<" player.\n";
+    std::cout << "\n\n\n\n\n\n\n           You are a "<< player <<" player.\n";
     std::cout << "            Thats your field." << "\n                    |\n                    ↓\n";
     placeMentPrint(field);
     return shipBuilding_start(field, count, player);;
 }
+
+
 
 bool battleRules (int &x, int &y)      
 {
@@ -262,6 +264,7 @@ void downPaint (std::vector<std::vector<int>> &field, int &x, int &y)
 
 bool shipDeath (std::vector<std::vector<int>> &field, int &x, int &y)  //will check ship on death and if he dies will paint
 {
+    field[y][x] = -2;
     int i , j, startX = x, startY = y;
     if (direction(field, x, y) == "right"){
         while (direction(field, x, y) != "notMoving") direction(field, x, y);       //If the check is successful , tracing begins
@@ -283,9 +286,9 @@ bool shipDeath (std::vector<std::vector<int>> &field, int &x, int &y)  //will ch
         downPaint(field, x, y);
         return true;
 
-    }else{
-        if (direction(field, startX, startY) == "down"){
-            while (direction(field, x, y) != "notMoving") direction(field, x, y);       //Problem part of function
+    }else if (direction(field, x, y) == "notMoving"){
+        if (field[y + 1][x] == -2){
+            while (direction(field, x, y) != "notMoving") direction(field, x, y);
         for (i = 0;;i++){
             if (field[y + i][x] == -1 || field[y + i][x] == 0) break;
             if (field[y + i][x] != -2) return false;
@@ -294,8 +297,8 @@ bool shipDeath (std::vector<std::vector<int>> &field, int &x, int &y)  //will ch
         downPaint(field, x, y);
         return true;
 
-        }else if (direction(field, startX, startY) == "right"){
-            while (direction(field, x, y) != "notMoving") direction(field, x, y);
+        }else if (field[y][x + 1] == -2){
+            while (direction(field, x, y) != "notMoving") direction(field, x, y);       
         for (int i = 0;;i++){
             if (field[y][x + i] == -1 || field[y][x + i] == 0) break;
             if (field[y][x + i] != -2) return false;
@@ -304,13 +307,13 @@ bool shipDeath (std::vector<std::vector<int>> &field, int &x, int &y)  //will ch
         rightPaint(field, x, y);
         return true;
         }
-    return false;
     }
+    return false;
 }
 
-bool move (std::vector<std::vector<int>> &field_1, std::string const p2)
+void move (std::vector<std::vector<int>> &field_1, std::string const p2)
 {
-    int x, y;
+    int x, y, startSize;
     char letter;
     battlePrint(field_1),Sleep(650);
     std::cout <<"You need to enter the hit coordinates\n";
@@ -323,12 +326,12 @@ bool move (std::vector<std::vector<int>> &field_1, std::string const p2)
             std::cout << "\nInvalid input\nInput coordinates again: ";
         }else break;
     }
+    startSize = field_1[y][x];
     if (field_1[y][x] <= 0) {
         std::cout << "\nYou missed\n";
         Sleep(650);
         if (field_1[y][x] != -2) field_1[y][x] = -1;
-        Sleep(800);
-        battlePrint(field_1);
+        Sleep(800), battlePrint(field_1);
     }else{
         if (field_1[y][x] == 1){
             paintAround(field_1, x, y);
@@ -336,35 +339,33 @@ bool move (std::vector<std::vector<int>> &field_1, std::string const p2)
             if (winCheck(field_1)){
                 battlePrint(field_1);
                 std::cout << p2 << " Win!";
-                return true;
+                return ;
             }else{
-            Sleep(650);
-            std::cout << "You hit! And can move again.\n";
-            Sleep(800);
-            move(field_1,p2);
+                Sleep(650);
+                std::cout << "You sank the ship! And can move again.\n";
+                Sleep(800), move(field_1,p2);
             }
-        }else field_1[y][x] = -2;         //100% hit and ship size >= 2
-
-        if (shipDeath(field_1, x, y)){
-            Sleep(650);
-            if (winCheck(field_1)){
-                battlePrint(field_1);
-                std::cout << p2 << " Win!";
-                return true;
-            }else{
-            std::cout << "You sank the ship! And can move again.\n";
-            Sleep(800);
-            move(field_1, p2);
+        }else{         //100% hit and ship size >= 2
+            }if (startSize != 1){
+                if (shipDeath(field_1, x, y)){     
+                    Sleep(650);     
+                    if (winCheck(field_1)){ 
+                        battlePrint(field_1);
+                        std::cout << p2 << " Win!";
+                        return ;
+                    }else{
+                    std::cout << "You sank the ship! And can move again.\n";
+                    Sleep(800), move(field_1, p2);
+                    }
+                }else{
+                    Sleep(650);
+                    std::cout << "You hit! And can move again.\n";
+                    Sleep(800), move(field_1,p2);
+                }
             }
-        }else{
-            Sleep(650);
-            std::cout << "You hit! And can move again.\n";
-            Sleep(800);
-            move(field_1,p2);
-        }
     }
-    return false;
 }
+
 int main ()
 {
     std::vector <std::vector<int>> field_1 (13, std::vector <int>(13, 0));
@@ -378,7 +379,7 @@ int main ()
     designations(field_1);
     designations(field_2);
     
-    std::cout << "Hello, this is a sea battle.\nFirst, you need to arrange your ships for two players.\n";
+    std::cout << "\nHello, this is a sea battle.\nFirst, you need to arrange your ships for two players.\n";
     std::cout << "Instructions: when entering coordinates, first enter the letter, after the number.\n\n";
 
     for (;;){
@@ -394,12 +395,14 @@ int main ()
     std::cout <<"\n\n\n\n\n\n\n\nLets start!\n";
     for (;;){
         Sleep(1200);
-        std::cout << p1 << " is moving now.\n";
-        if (move(field_2, p1)) break;
+        std::cout << p1 << " is moving now.\n"; //Make a string with the name of the field
+        move(field_2, p1);
+        if(winCheck(field_2)) break;
         Sleep(1200);
-        std::cout << p1 << " is moving now.\n";
-        if (move(field_1, p2)) break;
+        std::cout << p2 << " is moving now.\n";
+        move(field_1, p2);
+        if (winCheck(field_1)) break;
     }
-    Sleep(1000);
+    Sleep(400);
     std::cout << "\nThank for playing!";
 }
