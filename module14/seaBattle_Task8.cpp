@@ -120,12 +120,13 @@ void designations (std::vector<std::vector<int>> &field)              //designat
     }
 }
 
-bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, std::string const player)            //That function will build a ship
+bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, std::string const &player)            //That function will build a ship
 {
     int x1, y1 = 0, x2, y2;
     char letter;
     if ( size < 5 ){
     std::cout <<"You need to arrange " << count << " ship with the size of " << size << " cell.\n(input coordinates)\n";
+
     placeMentPrint(field);
 
     for (;count > 0; count--){
@@ -142,6 +143,7 @@ bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, s
         }else {
             std::cout << "Error, try again!!!\n";
             Sleep(650) , shipBuilding(field, size, count, player);
+            return true;
         }
         placeMentPrint(field);
     }
@@ -153,7 +155,7 @@ bool shipBuilding (std::vector<std::vector<int>> &field,int &size, int &count, s
     return true;
 }
 
-bool shipBuilding_start (std::vector<std::vector<int>> &field, int &count, std::string const player)                 // This function is designed to run (when ship size = 1)
+bool shipBuilding_start (std::vector<std::vector<int>> &field, int &count, std::string const &player)                 // This function is designed to run (when ship size = 1)
 {
     int x, y, size = 1;
     char letter;
@@ -179,7 +181,7 @@ bool shipBuilding_start (std::vector<std::vector<int>> &field, int &count, std::
     return shipBuilding(field, size, count, player);
 }
 
-bool placeMent (std::vector<std::vector<int>> &field, std::string const player)         //This function places ships (using helper functions)
+bool placeMent (std::vector<std::vector<int>> &field, std::string const &player)         //This function places ships (using helper functions)
 {
     int count = 4;    //This variable shows the number of ships of a certain size not yet built.
     std::cout << "\n\n\n\n\n\n\n           You are a "<< player <<" player.\n";
@@ -192,7 +194,7 @@ bool placeMent (std::vector<std::vector<int>> &field, std::string const player) 
 
 bool battleRules (int &x, int &y)      
 {
-    return (x < 2 || x > 12 ||(y < 2 || y > 12)) ? true: false;
+    return (x < 2 || x > 12 || y < 2 || y > 12);
 }
 
 void paintAround (std::vector<std::vector<int>> &field, int &x, int &y)       //Аills the circle around the sunken ship
