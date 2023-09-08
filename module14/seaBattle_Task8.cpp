@@ -339,7 +339,7 @@ void move (std::vector<std::vector<int>> &field_1, std::string const p2)
         }else{         //100% hit and ship size >= 2
             }if (startSize != 1){
                 if (shipDeath(field_1, x, y)){     
-                    Sleep(650);                             //after kill the ship if u miss next move u can move again (error need to be fixed)
+                    Sleep(650); 
                     if (winCheck(field_1)){ 
                         battlePrint(field_1);
                         std::cout << p2 << " Win!";
