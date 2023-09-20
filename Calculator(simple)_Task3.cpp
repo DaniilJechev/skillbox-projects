@@ -18,7 +18,7 @@ int main ()
     char operation;
     double  double1, double2;
     std::cout << "input the example: ";
-    std::cin >> example;
+    getline(std::cin, example);
     std::stringstream stream(example);
 
     stream >> double1 >> operation >> double2;
