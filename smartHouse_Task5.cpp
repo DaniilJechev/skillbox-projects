@@ -4,20 +4,30 @@
 enum switchers
 {
     off = 0,
-    plumbingON = 1
+    plumbingON = 1,
+    lightOutsideON = 2,
 
 };
 
 
-void plumbing (int& tOut, int& total, int& plumbingState){        //printing all values in one F, with inversion
-    if (plumbingState == 0 && tOut <= 5 ){
-        plumbingState = plumbingON, total |= plumbingState;
-    }else if (plumbingState == 1 && tOut > 5){
-        plumbingState = off, total &= ~plumbingState; 
+void plumbing (int& tOut, int& total){ 
+    if (!(total & plumbingON) && tOut < 0 ){
+        total |= plumbingON;
+        std::cout <<"plumbing ON!" <<  std::endl;
+    }else if ((total & plumbingON) && tOut > 5){
+        total ^= plumbingON;
+        std::cout <<"plumbing OFF!" <<  std::endl;
     }
-    std::cout << total;
 }
 
+
+void lightOut (int time, std::string& movement, int& total)
+{
+    time = time % 24;
+    if ((time > 16 || time < 5) && movement == "yes" && total & lightOutsideON ){
+        std::cout << "Light in garden ON!";
+    }
+}
 
 
 void timePrint (int& i)
@@ -31,7 +41,8 @@ int main ()
 {
     int tOut, tIn;
     std::string movements, lights, inf;   // movements - yes / no       // lights - on / off
-    int total, plumbingState = 0;
+    int total, plumbingState = 0, lightOutState = 0;
+
 
     for (int i = 0; i < 48; i ++){
         timePrint(i);
@@ -39,7 +50,8 @@ int main ()
         getline(std::cin, inf);
         std::stringstream stream (inf);
         stream >> tIn >> tOut >> movements >> lights;
-        plumbing(tOut,total, plumbingState);
+        plumbing(tOut, total);
+        lightOut(i, movements, total);
     }
     std::cout << std::endl << "end!";
 }
