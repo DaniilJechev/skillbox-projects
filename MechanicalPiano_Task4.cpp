@@ -5,59 +5,43 @@
 enum note
 {
     DO = 1, 
-    RE, 
-    MI, 
-    FA, 
-    SOL, 
-    LA, 
-    SI
+    RE = 2, 
+    MI = 4, 
+    FA = 8, 
+    SOL = 16, 
+    LA = 32, 
+    SI = 64
 };
 
-bool symCheck(std::string str)
+bool isAllowed (int sound)
 {
-    char comb = str[0];
-    if ((comb < 49 || comb > 57) || (comb == ' ')) return true;
-    return false;
+    return (sound < 1 || sound > 7);
 }
 
-bool isAllowed (std::string combination)
+void melodyPrint (int sound)
 {
-    char comb;
-    for (int i = 0; i < combination.size(); i ++){
-        comb = combination[i];
-        if ((comb < 49 || comb > 57) && (comb != ' ')) return false;
-    }
-    return true;
-}
-
-void melodyPrint (std::string soundStr){
-    std::string sound;
-    for (int i = 0; i < soundStr.size(); i ++){
-        sound = soundStr[i];
-        if (symCheck(sound)) continue;
-        if (std::stoi(sound) == note::DO) std::cout << "Do ", Sleep(200);
-        if (std::stoi(sound) == note::RE) std::cout << "RE ", Sleep(200);
-        if (std::stoi(sound) == note::MI) std::cout << "MI ", Sleep(200);
-        if (std::stoi(sound) == note::FA) std::cout << "FA ", Sleep(200);
-        if (std::stoi(sound) == note::SOL) std::cout << "SOL ", Sleep(200);
-        if (std::stoi(sound) == note::LA) std::cout << "LA ", Sleep(200);
-        if (std::stoi(sound) == note::SI) std::cout << "SI ", Sleep(200);
-    }
-    std::cout << std::endl;
+        if (sound == note::DO) std::cout << "Do ", Sleep(200);
+        if (sound == note::RE) std::cout << "RE ", Sleep(200);
+        if (sound == note::MI) std::cout << "MI ", Sleep(200);
+        if (sound == note::FA) std::cout << "FA ", Sleep(200);
+        if (sound == note::SOL) std::cout << "SOL ", Sleep(200);
+        if (sound == note::LA) std::cout << "LA ", Sleep(200);
+        if (sound == note::SI) std::cout << "SI ", Sleep(200);
+        std::cout << std::endl;
 }
 
 int main()
 {
-    std::string combination;
-    std::vector <std::string> melody;
+    int sound;
+    std::vector <int> melody;
     while (melody.size() < 12){
         std::cout << std::endl << "Enter new combination: ";
-        getline(std::cin, combination);
-        if (!isAllowed(combination)){
-            std::cout << std::endl << "Wrong combination!";
+        std::cin >> sound;
+        if (isAllowed(sound)){
+            std::cout << "Wrong combination!" << std::endl ;
             continue;
         }
-        melody.push_back(combination);
+        melody.push_back(1 << sound - 1);
     }
 
 
