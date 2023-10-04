@@ -3,8 +3,7 @@
 
 void swapvec(std::vector<int>& a, int *b)
 {
-    int x = a.size() <= sizeof(b) / sizeof( *b ) ? a.size() + 1: sizeof(b) / sizeof( *b ) + 1; // search min size of these arrays
-    for (int i = 0; i <= x; i ++){
+    for (int i = 0; i < a.size(); i ++){
         std::swap(a[i], *(b + i));
     }
 }

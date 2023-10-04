@@ -2,12 +2,10 @@
 
 void evenDigit(long long& num, int& ans)
 {
-    std::string strNum = std::to_string(num);
-
-    for (int i = 0; i < strNum.size(); i ++){
-        if ( (int) (strNum[i]) % 2 == 0) ans++;
-    } 
-
+    if (num == 0) return;
+    if ( num % 2 == 0) ans++;
+    num /= 10;
+    evenDigit(num, ans);
 }
 
 int main ()
