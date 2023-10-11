@@ -20,7 +20,7 @@ int main()
     file.seekg(0);
 
     char text [size + 1];
-    text [size + 1] = 0;
+    text [size] = 0;
     file.read(text, size);
 
     std::cout << text;
