@@ -1,4 +1,4 @@
 *.exe
 .vscode/
-test.cpp
-test2.cpp
+test*
+documentation.txt
