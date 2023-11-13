@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 enum roomTypes{
     bedroom = 1,
@@ -39,9 +41,9 @@ struct garage
     int square;
 };
 
-struct buthHouse{
+struct bathHouse{
     int square;
-    bool chimneyStave = false;
+    bool chimneyStove = false;
 };
 
 struct barn{
@@ -56,9 +58,10 @@ struct territoty
     int buildings = 0;  // this num will be changed using enum Bilding types. 
     // This num will determine which bildings present on territory and wich are not (which values I'll use)
     struct house building_House;
-    struct garage building_Garge;
-    struct buthHouse building_ButhHouse;
-    struct barn building_Barn;
+    struct bathHouse building_BathHouse;
+
+    int garage_Square;
+    int barn_Square;
 };
 
 struct villageTerritories
@@ -113,39 +116,35 @@ int main()
         } // house will be added to territory after receiving all inf about it
 
         //garage block
-        garage cur_garage;
         std::cout << std::endl << "Do you have a garage on your territory?(yes or no): ";
         std::cin >> answer;
         if (answer == "yes"){
             cur_territory.buildings += buildingTypes::is_garage;
             std::cout << std::endl << "Enter the square of your garage (m²): "; 
-            std::cin >> cur_garage.square;
-            cur_territory.building_Garge = cur_garage;
+            std::cin >> cur_territory.garage_Square;
         }
 
-        //buthHouse block
-        buthHouse cur_buthHouse;
-        std::cout << std::endl << "Do you have a buthHouse on your territory?(yes or no): ";
+        //bathHouse block
+        bathHouse cur_bathHouse;
+        std::cout << std::endl << "Do you have a bathHouse on your territory?(yes or no): ";
         std::cin >> answer;
         if (answer == "yes"){
             cur_territory.buildings += buildingTypes::is_buthHause;
-            std::cout << std::endl << "Do you have a chimneys and stove into your buthHouse?(yes or no): ";
+            std::cout << std::endl << "Do you have a chimneys and stove into your bathHouse?(yes or no): ";
             std::cin >> answer;
-            if (answer == "yes") cur_buthHouse.chimneyStave = true;
-            std::cout << std::endl << "Enter the square of your buthHouse (m²): "; 
-            std::cin >> cur_buthHouse.square;
-            cur_territory.building_ButhHouse = cur_buthHouse;
+            if (answer == "yes") cur_bathHouse.chimneyStove = true;
+            std::cout << std::endl << "Enter the square of your bathHouse (m²): "; 
+            std::cin >> cur_bathHouse.square;
+            cur_territory.building_BathHouse = cur_bathHouse;
         }
 
         //barn block
-        barn cur_barn;
         std::cout << std::endl << "Do you have a barn on your territory?(yes or no): ";
         std::cin >> answer;
         if (answer == "yes"){
             cur_territory.buildings += buildingTypes::is_barn;
             std::cout << std::endl << "Enter the square of your barn (m²): "; 
-            std::cin >> cur_barn.square;
-            cur_territory.building_Barn = cur_barn;
+            std::cin >> cur_territory.barn_Square;
         }
 
         //house main information block
@@ -215,4 +214,83 @@ int main()
         cur_territory.name = "";
         cur_territory.square = 0;
     }
+
+    // Start writing data
+    std::ofstream file ("villageData.txt");
+    file.setf(std::ios::boolalpha);
+    bool temp;
+    for (int i = 0; i <= village.villageArea.size(); i ++){
+        territoty* wr_Territroy = &village.villageArea[i];
+        file << "Number of ground " << i + 1 << " - " << wr_Territroy->name << std::endl;
+        
+        temp = wr_Territroy->buildings & buildingTypes::is_barn; //Barn 
+        file << "Barn = " << temp << '.';
+        if (temp) file << " Square = " << wr_Territroy->barn_Square << std::endl;
+            else file << std::endl;
+
+        temp = wr_Territroy->buildings & buildingTypes::is_garage; //Garage 
+        file << "Garage = " << temp << '.';
+        if (temp) file << " Square = " << wr_Territroy->garage_Square << std::endl;
+            else file << std::endl;
+
+        temp = wr_Territroy->buildings & buildingTypes::is_buthHause; //BathHouse 
+        file << "Bathhouse = " << temp << '.';
+        if (temp){
+            file << " Square = " << wr_Territroy->building_BathHouse.square << std::endl;
+            file << "Chimneys and Stove = " << wr_Territroy->building_BathHouse.chimneyStove;
+        }else file << std::endl;
+        
+        temp = wr_Territroy->buildings & buildingTypes::is_house;  //House base inf
+        file << "House = " << temp << '.';
+        if(temp){
+            file << " Square = " << wr_Territroy->building_House.square;
+            file << ". Chimnyes and stove = " << wr_Territroy->building_House.chimneysStove << std::endl ;
+            // Basic inf about home
+            house* wr_House = &wr_Territroy->building_House;
+
+            for (int i = 0; i < wr_House->floors.size(); i ++){
+                floor* wr_Floor = &wr_House->floors[i];
+                file << std::string('-', 10) << std::endl;
+                file << "Float " << i + 1 << ':' << std::endl;
+                file << "Ceiling height = " << wr_Floor->ceilingHeight << std::endl;
+                file << "Rooms: ";
+
+                std::string string_rooms, temp;
+                for (int i = 0; wr_Floor->rooms.size() < i; i ++){
+                    if (wr_Floor->rooms[i].roomType & roomTypes::bathroom){
+                        string_rooms += "buthroom ";
+                    }else if (wr_Floor->rooms[i].roomType & roomTypes::bedroom){
+                     string_rooms += "bedroom ";
+                    }else if (wr_Floor->rooms[i].roomType & roomTypes::childrenRoom){
+                        string_rooms += "childrenRoom ";
+                    }else if (wr_Floor->rooms[i].roomType & roomTypes::kitchen){
+                        string_rooms += "kitchen ";
+                    }else if (wr_Floor->rooms[i].roomType & roomTypes::livingRoom) string_rooms += "livingRoom ";
+                }
+                
+
+                std::stringstream stream_rooms (string_rooms); //I need stream to add the commas and dot into the string
+                string_rooms = "";
+
+                while (!stream_rooms.eof()){
+                stream_rooms >> temp;
+                temp.push_back(','), temp.push_back(' ');
+                string_rooms += temp;
+                temp = "";
+                }
+                string_rooms.erase(string_rooms.size() - 4);
+                string_rooms.push_back('.');
+
+                file << string_rooms << std::endl;
+
+                string_rooms = "";
+            }
+
+        }else file << std::endl;
+        file << std::string ('=', 25);
+    }
+
+
+    file.close();
+    // End
 }
