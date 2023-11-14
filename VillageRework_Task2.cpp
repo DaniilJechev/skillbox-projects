@@ -36,18 +36,9 @@ struct house{
     std::vector <floor> floors;
 };
 
-struct garage
-{
-    int square;
-};
-
 struct bathHouse{
     int square;
     bool chimneyStove = false;
-};
-
-struct barn{
-    int square;
 };
 
 
@@ -219,7 +210,7 @@ int main()
     std::ofstream file ("villageData.txt");
     file.setf(std::ios::boolalpha);
     bool temp;
-    for (int i = 0; i <= village.villageArea.size(); i ++){
+    for (int i = 0; i < village.villageArea.size(); i ++){
         territoty* wr_Territroy = &village.villageArea[i];
         file << "Number of ground " << i + 1 << " - " << wr_Territroy->name << std::endl;
         
@@ -236,12 +227,13 @@ int main()
         temp = wr_Territroy->buildings & buildingTypes::is_buthHause; //BathHouse 
         file << "Bathhouse = " << temp << '.';
         if (temp){
-            file << " Square = " << wr_Territroy->building_BathHouse.square << std::endl;
-            file << "Chimneys and Stove = " << wr_Territroy->building_BathHouse.chimneyStove;
+            file << " Square = " << wr_Territroy->building_BathHouse.square;
+            file << ". Chimneys and Stove = " << wr_Territroy->building_BathHouse.chimneyStove << std::endl;
         }else file << std::endl;
         
         temp = wr_Territroy->buildings & buildingTypes::is_house;  //House base inf
         file << "House = " << temp << '.';
+
         if(temp){
             file << " Square = " << wr_Territroy->building_House.square;
             file << ". Chimnyes and stove = " << wr_Territroy->building_House.chimneysStove << std::endl ;
@@ -250,13 +242,13 @@ int main()
 
             for (int i = 0; i < wr_House->floors.size(); i ++){
                 floor* wr_Floor = &wr_House->floors[i];
-                file << std::string('-', 10) << std::endl;
-                file << "Float " << i + 1 << ':' << std::endl;
+                file << "---";
+                file << std::endl << "Float " << i + 1 << ':' << std::endl;
                 file << "Ceiling height = " << wr_Floor->ceilingHeight << std::endl;
                 file << "Rooms: ";
 
                 std::string string_rooms, temp;
-                for (int i = 0; wr_Floor->rooms.size() < i; i ++){
+                for (int i = 0; i < wr_Floor->rooms.size(); i ++){
                     if (wr_Floor->rooms[i].roomType & roomTypes::bathroom){
                         string_rooms += "buthroom ";
                     }else if (wr_Floor->rooms[i].roomType & roomTypes::bedroom){
@@ -268,7 +260,6 @@ int main()
                     }else if (wr_Floor->rooms[i].roomType & roomTypes::livingRoom) string_rooms += "livingRoom ";
                 }
                 
-
                 std::stringstream stream_rooms (string_rooms); //I need stream to add the commas and dot into the string
                 string_rooms = "";
 
@@ -287,10 +278,8 @@ int main()
             }
 
         }else file << std::endl;
-        file << std::string ('=', 25);
+        if (i + 1 < village.villageArea.size()) file << std::endl << "========================" << std::endl;
     }
-
-
     file.close();
     // End
 }
