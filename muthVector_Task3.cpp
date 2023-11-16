@@ -43,10 +43,11 @@ double vec_scale(double length, double multiplier, bool writeResult = true)
     return scaledVec;
 }
 
-void vec_normalize(muthVector& first, muthVector& second)
+void vec_normalize(muthVector& first)
 {
-    double length = vec_length (first, second, false);
-    std::cout << "Result = " << vec_scale(length, 1/length, false);
+    double length = sqrt(pow(first.cordX, 2) + pow(first.cordY, 2));
+    if (length < 0) std::cout << "Coordinates: (0, 0)";
+        else std::cout << "Coordinates: (" << first.cordX/length << ", " << first.cordY/length << ')';
 }
 
 bool is_incorrect(int command){
@@ -56,12 +57,14 @@ bool is_incorrect(int command){
             command != commands::summ);
 }
 
-void coord_Input(muthVector& first, muthVector& second)
+void coord_Input(muthVector& first, muthVector& second, bool twoCoords = true)
 {
     std::cout << std::endl << "Input first x, y coordinates: ";
     std::cin >> first.cordX >> first.cordY;
-    std::cout << std::endl << "Input second x, y coordinates: ";
-    std::cin >> second.cordX >> second.cordY;
+    if (twoCoords){
+        std::cout << std::endl << "Input second x, y coordinates: ";
+        std::cin >> second.cordX >> second.cordY;
+    }
 }
 
 
@@ -102,7 +105,7 @@ int main()
         coord_Input(firstVec, secondVec);
         vec_length(firstVec, secondVec);
     }else{
-        coord_Input(firstVec, secondVec);
-        vec_normalize(firstVec, secondVec);
+        coord_Input(firstVec, secondVec, false);
+        vec_normalize(firstVec);
     }
 }
