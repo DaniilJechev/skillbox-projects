@@ -47,58 +47,187 @@ void mapPrint(std::vector<std::vector<std::string>>& map, character player) // t
     std::cout << std::endl;
 }
 
-void randomPosition (character& personage, std::vector <std::vector<std::string>>& map)
+void randomPosition (std::vector <character>& personages, std::vector <std::vector<std::string>>& map)
 {
-    do{
-        personage.pos.cordY = std::rand() % 20;
-        personage.pos.cordX = std::rand() % 20;
-    } while (map[personage.pos.cordY][personage.pos.cordY] != ".");
+    for (int i = 0; i < personages.size(); i ++){
+        do{
+            personages[i].pos.cordY = std::rand() % 20;
+            personages[i].pos.cordX = std::rand() % 20;
+        } while (map[personages[i].pos.cordY][personages[i].pos.cordY] != ".");
         
-    map[personage.pos.cordY][personage.pos.cordX] = personage.name;
+        map[personages[i].pos.cordY][personages[i].pos.cordX] = personages[i].name;
+    }
 }
 
-void randomEnemiesStats (character& personage){
-    personage.hp = 50 + std::rand() % 101;
-    personage.armor = std::rand() % 51;
-    personage.damage = 15 + std::rand() % 16;
-}
-
-void personMoving (character& personage, std::vector <std::vector<std::string>>& map, bool mainCharacter = false)
+void randomEnemiesStats (std::vector <character>& personages)
 {
-    int command;
-    if (mainCharacter){
-        std::cout << std::endl << "Move commands: " << std::endl;
-        std::cout << "up = 1\n"
-                  << "down = 2\n"
-                  << "left = 3\n"
-                  << "right = 4\n"
-                  << "Input nedeed command number: ";
-        std::cin >> command;
-    }else command = 1 + std::rand() % 4;
+    for (int i = 1; i < personages.size(); i ++){
+        personages[i].hp = 50 + std::rand() % 101;
+        personages[i].armor = std::rand() % 51;
+        personages[i].damage = 15 + std::rand() % 16;
+    }
+}
 
-    map[personage.pos.cordY][personage.pos.cordX] = '.'; // remove character name from old pos
-    if (command == sides::up){
-        if (personage.pos.cordY != 0 && map[personage.pos.cordY - 1][personage.pos.cordX] == "."){
-            personage.pos.cordY--;
-        } 
-    }else if (command == sides::down){
-        if (personage.pos.cordY != 19 && map[personage.pos.cordY + 1][personage.pos.cordX] == "."){
-            personage.pos.cordY++;
-        }
-    }else if (command == sides::left){
-        if (personage.pos.cordX != 0 && map[personage.pos.cordY ][personage.pos.cordX - 1] == "."){
-            personage.pos.cordX--;
-        }
-    }else if (command == sides::right){
-        if (personage.pos.cordX != 19 && map[personage.pos.cordY][personage.pos.cordX + 1] == "."){
-            personage.pos.cordX ++;
+void damage(character& hitter, character& defender, std::vector<std::vector<std::string>>& map)
+{
+    defender.armor -= hitter.damage;
+    if (defender.armor <= 0){
+        defender.hp += defender.armor;
+        defender.armor = 0;
+        if (defender.hp <= 0){
+            hitter.killCount++;
+            defender.name = ".";
+            map[defender.pos.cordY][defender.pos.cordX] = '.';
         }
     }
-    map[personage.pos.cordY][personage.pos.cordX] = personage.name; // add the character name to new cell
 }
 
-void damageFunction (character& personage, std::vector<std::vector<std::string>>& map){
+int sideDefiner (std::string& side)
+{
+    if (side == "w") return 1;
+        else if (side == "s") return 2;
+            else if (side == "a") return 3;
+                else if (side == "d") return 4;
+    return 0;
+} 
 
+void personMoving (std::vector <character>& personages, std::vector <std::vector<std::string>>& map)
+{
+    int command;
+    std::string side;
+    for (int i = 0; i < personages.size(); i++){
+        if (i == 0){ //player is in this position
+            std::cout << std::endl << "Move commands: " << std::endl;
+            std::cout << "up = w\n"
+                      << "left = a\n"
+                      << "down = s\n"
+                      << "right = d\n"
+                      << "Input nedeed command: ";
+            std::getline(std::cin, side);
+            std::cout << std::endl;
+            command = sideDefiner(side);
+        }
+        if (personages[i].name != "."){
+
+            if (command == sides::up){
+                if (personages[i].pos.cordY != 0){
+                    if (map[personages[i].pos.cordY - 1][personages[i].pos.cordX] == "."){
+
+                        map[personages[i].pos.cordY][personages[i].pos.cordX] = '.'; // remove character name from old pos
+                        map[personages[i].pos.cordY - 1][personages[i].pos.cordX] = personages[i].name; // add the character name to new cell
+                        personages[i].pos.cordY--;
+                    }else{
+                        if (!(map[personages[i].pos.cordY - 1][personages[i].pos.cordX][0] == '#' // checking, if two personages are enemies, damage function will not work
+                             && map[personages[i].pos.cordY][personages[i].pos.cordX][0] == '#')){ 
+                            
+                            std::string defenderName = map[personages[i].pos.cordY - 1][personages[i].pos.cordX];
+                            std::string hitterName = map[personages[i].pos.cordY][personages[i].pos.cordX];
+                            int hitterVectorPos, defenderVectorPos;
+                            if (defenderName[0] != '#'){
+                                defenderVectorPos = 0;
+                                hitterVectorPos = atoi(&hitterName[1]); // converting number in enemy name from string to int
+                            }else{
+                                hitterVectorPos = 0;
+                                defenderVectorPos = atoi(&defenderName[1]); // same as int previous comment
+                            }
+                            damage (personages[hitterVectorPos], personages[defenderVectorPos], map);
+                        }
+
+                    }
+                }
+            }else if (command == sides::down){
+                if (personages[i].pos.cordY != 19){
+                    if (map[personages[i].pos.cordY + 1][personages[i].pos.cordX] == "."){
+
+                        map[personages[i].pos.cordY][personages[i].pos.cordX] = '.';
+                        map[personages[i].pos.cordY + 1][personages[i].pos.cordX] = personages[i].name;
+                        personages[i].pos.cordY++;
+                    }else{
+                        if (!(map[personages[i].pos.cordY + 1][personages[i].pos.cordX][0] == '#'
+                             && map[personages[i].pos.cordY][personages[i].pos.cordX][0] == '#')){ 
+                            
+                            std::string defenderName = map[personages[i].pos.cordY + 1][personages[i].pos.cordX];
+                            std::string hitterName = map[personages[i].pos.cordY][personages[i].pos.cordX];
+                            int hitterVectorPos, defenderVectorPos;
+                            if (defenderName[0] != '#'){
+                                defenderVectorPos = 0;
+                                hitterVectorPos = atoi(&hitterName[1]);
+                            }else{
+                                hitterVectorPos = 0;
+                                defenderVectorPos = atoi(&defenderName[1]);
+                            }
+                            damage (personages[hitterVectorPos], personages[defenderVectorPos], map);
+                        }
+                    }
+                }
+            }else if (command == sides::left){
+                if (personages[i].pos.cordX != 0){
+                    if (map[personages[i].pos.cordY][personages[i].pos.cordX - 1] == "."){
+                    
+                        map[personages[i].pos.cordY][personages[i].pos.cordX] = '.';
+                        map[personages[i].pos.cordY][personages[i].pos.cordX - 1] = personages[i].name;
+                        personages[i].pos.cordX--;
+                    }else{
+                        if (!(map[personages[i].pos.cordY][personages[i].pos.cordX - 1][0] == '#'
+                             && map[personages[i].pos.cordY][personages[i].pos.cordX][0] == '#')){ 
+                            
+                            std::string defenderName = map[personages[i].pos.cordY][personages[i].pos.cordX - 1];
+                            std::string hitterName = map[personages[i].pos.cordY][personages[i].pos.cordX];
+                            int hitterVectorPos, defenderVectorPos;
+                            if (defenderName[0] != '#'){ 
+                                defenderVectorPos = 0;
+                                hitterVectorPos = atoi(&hitterName[1]);
+                            }else{
+                                hitterVectorPos = 0;
+                                defenderVectorPos = atoi(&defenderName[1]);
+                            }
+                            damage (personages[hitterVectorPos], personages[defenderVectorPos], map);
+                        }
+                    }
+                }
+            }else if (command == sides::right){
+                    if (personages[i].pos.cordX != 19){
+                    if (map[personages[i].pos.cordY][personages[i].pos.cordX + 1] == "."){
+
+                        map[personages[i].pos.cordY][personages[i].pos.cordX] = '.';
+                        map[personages[i].pos.cordY][personages[i].pos.cordX + 1] = personages[i].name;
+                        personages[i].pos.cordX++;
+                    }else{
+                        if (!(map[personages[i].pos.cordY][personages[i].pos.cordX + 1][0] == '#'
+                             && map[personages[i].pos.cordY][personages[i].pos.cordX][0] == '#')){ 
+                            
+                            std::string defenderName = map[personages[i].pos.cordY][personages[i].pos.cordX + 1];
+                            std::string hitterName = map[personages[i].pos.cordY][personages[i].pos.cordX];
+                            int hitterVectorPos, defenderVectorPos;
+                            if (defenderName[0] != '#'){
+                                defenderVectorPos = 0;
+                                hitterVectorPos = atoi(&hitterName[1]);
+                            }else{
+                                hitterVectorPos = 0;
+                                defenderVectorPos = atoi(&defenderName[1]);
+                            }
+                            damage (personages[hitterVectorPos], personages[defenderVectorPos], map);
+                        }
+
+                    }
+                }
+            }
+        }
+        command = 1 + std::rand() % 4;
+    }
+}
+
+bool win_lose_Check (std::vector <character>& personages){
+    if (personages[0].name == "."){
+        std::cout << std::endl << "You lose :(";
+        return false;
+    }else{
+        for (int i = 1; i < personages.size(); i ++){
+            if (personages[i].name != ".") return true;
+        }
+        std::cout << std::endl << "You won!!!";
+        return false;
+    }
 }
 
 int main()
@@ -106,46 +235,31 @@ int main()
     character player;
     character enemy1 = {"#1"}, enemy2 = {"#2"}, enemy3 = {"#3"}, enemy4 = {"#4"}, enemy5 = {"#5"};
     std::vector <std::vector<std::string>> map(20, std::vector<std::string> (20, "."));
+    std::vector <character> personages = {player, enemy1, enemy2, enemy3, enemy4, enemy5}; // This vector need for damage function in the future
 
     std::srand(time(NULL));
 
     //main charachter constructor
     std::cout << "Now, you need to create your character: " << std::endl;
     std::cout << "Give him/her name (only two first letters will displayed on the screen): ";
-    std::cin >> player.name;
+    std::cin >> personages[0].name;
     std::cout << std::endl << "HP = ";
-    std::cin >> player.hp;
+    std::cin >> personages[0].hp;
     std::cout << std::endl << "Damage = ";
-    std::cin >> player.damage;
+    std::cin >> personages[0].damage;
     std::cout << std::endl << "Armor = ";
-    std::cin >> player.armor;
+    std::cin >> personages[0].armor;
     std::cout << "Personage was created!" << std::endl;
     std::cout << "Thats your field: " << std::endl;
 
-    // random positions
-    randomPosition(player, map);
-    randomPosition(enemy1, map);
-    randomPosition(enemy2, map);
-    randomPosition(enemy3, map);
-    randomPosition(enemy4, map);
-    randomPosition(enemy5, map);
-
-    // random enemies stats
-    randomEnemiesStats(enemy1);
-    randomEnemiesStats(enemy2);
-    randomEnemiesStats(enemy3);
-    randomEnemiesStats(enemy4);
-    randomEnemiesStats(enemy5);
+    // random positions for all characters and random stats for enemies 
+    randomPosition(personages, map);
+    randomEnemiesStats(personages);
     
-    mapPrint(map, player);
+    mapPrint(map, personages[0]);
     std::cout << "Let's start the battle!" << std::endl;
-    while (true){
-        personMoving(player, map, true);
-        personMoving(enemy1, map);
-        personMoving(enemy2, map);
-        personMoving(enemy3, map);
-        personMoving(enemy4, map);
-        personMoving(enemy5, map);
-        mapPrint(map, player);
+    while (win_lose_Check(personages)){
+        personMoving(personages, map);
+        mapPrint(map, personages[0]);
     }
 }

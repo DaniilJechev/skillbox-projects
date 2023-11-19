@@ -1,5 +1,5 @@
 *.exe
 .vscode/
 test*
-documentation.txt
-villageData.txt
+*.txt
+saves.bin
