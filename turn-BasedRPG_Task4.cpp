@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <time.h>
 #include <cstring>
+#include <fstream>
 
 enum sides{
     up = 1,
@@ -89,12 +90,72 @@ int sideDefiner (std::string& side)
             else if (side == "a") return 3;
                 else if (side == "d") return 4;
     return 0;
-} 
+}
+
+
+void saveProgress (std::vector <character>& personages, std::vector <std::vector<std::string>>& map, std::string& command)  
+{
+    // file plan: nameLen| name(string) | hp | armor | damage | killcount | pos.cordX | pos.cordY
+    std::string fileName, saveName;
+    std::cout << std::endl << "Enter the fileName of your save please: ";
+    std::cin >> fileName;
+    std::ofstream write_Save(fileName, std::ios::app);
+    while (!write_Save.is_open()){
+        std::cout << std::endl << "Incorrect file name, try enter again: ";
+        std::cin >> fileName;
+        write_Save.open(fileName, std::ios::app);
+    }
+    std::cout << std::endl << "Enter name of your save: ";
+    std::cin >> saveName;
+    write_Save << saveName << std::endl;
+    
+    for (int i = 0; i < personages.size(); i++){
+        write_Save.write((char*)personages[i].name.size(), sizeof(int));
+        write_Save.write((char*)&personages[i].name, personages[i].name.size());
+        write_Save.write((char*)&personages[i].hp, sizeof(int));
+        write_Save.write((char*)&personages[i].armor, sizeof(int));
+        write_Save.write((char*)&personages[i].damage, sizeof(int));
+        write_Save.write((char*)&personages[i].killCount, sizeof(int));
+        write_Save.write((char*)&personages[i].pos.cordX, sizeof(int));
+        write_Save.write((char*)&personages[i].pos.cordY, sizeof(int));
+    }
+
+    for (int i = 0; i < map.size(); i++){
+        write_Save.write((char*)&map[i], map[i].size());
+    }
+
+    std::cout << std::endl << "Progress is saved, your save name is '" << saveName << "'";
+    write_Save.close();
+
+    std::cout << std::endl << "Now, continue game and enter the which you want to go: ";
+    std::cin >> command;
+}
+
+void loadProgress (std::vector <character>& personages, std::vector <std::vector<std::string>>& map, std::string& command)
+{
+    // file plan: nameLen| name(string) | hp | armor | damage | killcount | pos.cordX | pos.cordY
+    std::string fileName;
+    std::cout << std::endl << "Enter the fileName of your save please: ";
+    std::cin >> fileName;
+    std::ifstream saveF(fileName, std::ios::binary);
+    while (!saveF.is_open()){
+        std::cout << std::endl << "Incorrect file name, try enter again: ";
+        std::cin >> fileName;
+        saveF.open(fileName, std::ios::binary);
+    }
+    // do the outPut all saveNames
+
+
+    saveF.close();
+
+    std::cout << std::endl << "Now, continue game and enter the which you want to go: ";
+    std::cin >> command;
+}
 
 void personMoving (std::vector <character>& personages, std::vector <std::vector<std::string>>& map)
 {
-    int command;
-    std::string side;
+    int side;
+    std::string command;
     for (int i = 0; i < personages.size(); i++){
         if (i == 0){ //player is in this position
             std::cout << std::endl << "Move commands: " << std::endl;
@@ -102,14 +163,18 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
                       << "left = a\n"
                       << "down = s\n"
                       << "right = d\n"
+                      << "(P.s. if u want to save your progress, enter save, or if u want to load your progress, press load)\n" 
                       << "Input nedeed command: ";
-            std::getline(std::cin, side);
+            std::getline(std::cin, command);
             std::cout << std::endl;
-            command = sideDefiner(side);
+            if (command == "save") saveProgress(personages, map, command);
+                else if (command == "load") loadProgress(personages, map, command);
+
+            side = sideDefiner(command);
         }
         if (personages[i].name != "."){
 
-            if (command == sides::up){
+            if (side == sides::up){
                 if (personages[i].pos.cordY != 0){
                     if (map[personages[i].pos.cordY - 1][personages[i].pos.cordX] == "."){
 
@@ -135,7 +200,7 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
 
                     }
                 }
-            }else if (command == sides::down){
+            }else if (side == sides::down){
                 if (personages[i].pos.cordY != 19){
                     if (map[personages[i].pos.cordY + 1][personages[i].pos.cordX] == "."){
 
@@ -160,7 +225,7 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
                         }
                     }
                 }
-            }else if (command == sides::left){
+            }else if (side == sides::left){
                 if (personages[i].pos.cordX != 0){
                     if (map[personages[i].pos.cordY][personages[i].pos.cordX - 1] == "."){
                     
@@ -185,7 +250,7 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
                         }
                     }
                 }
-            }else if (command == sides::right){
+            }else if (side == sides::right){
                     if (personages[i].pos.cordX != 19){
                     if (map[personages[i].pos.cordY][personages[i].pos.cordX + 1] == "."){
 
@@ -229,6 +294,7 @@ bool win_lose_Check (std::vector <character>& personages){
         return false;
     }
 }
+
 
 int main()
 {
