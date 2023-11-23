@@ -96,37 +96,33 @@ int sideDefiner (std::string& side)
 void saveProgress (std::vector <character>& personages, std::vector <std::vector<std::string>>& map, std::string& command)  
 {
     // file plan: nameLen| name(string) | hp | armor | damage | killcount | pos.cordX | pos.cordY
-    std::string fileName, saveName;
+    std::string fileName;
     std::cout << std::endl << "Enter the fileName of your save please: ";
     std::cin >> fileName;
-    std::ofstream write_Save(fileName, std::ios::app);
+    std::ofstream write_Save(fileName, std::ios::binary);
     while (!write_Save.is_open()){
         std::cout << std::endl << "Incorrect file name, try enter again: ";
         std::cin >> fileName;
-        write_Save.open(fileName, std::ios::app);
+        write_Save.open(fileName, std::ios::binary);
     }
-    std::cout << std::endl << "Enter name of your save: ";
-    std::cin >> saveName;
-    write_Save << saveName << std::endl;
     
     for (int i = 0; i < personages.size(); i++){
-        write_Save.write((char*)personages[i].name.size(), sizeof(int));
-        write_Save.write((char*)&personages[i].name, personages[i].name.size());
-        write_Save.write((char*)&personages[i].hp, sizeof(int));
-        write_Save.write((char*)&personages[i].armor, sizeof(int));
-        write_Save.write((char*)&personages[i].damage, sizeof(int));
-        write_Save.write((char*)&personages[i].killCount, sizeof(int));
-        write_Save.write((char*)&personages[i].pos.cordX, sizeof(int));
-        write_Save.write((char*)&personages[i].pos.cordY, sizeof(int));
+        int nameSize = personages[i].name.length();
+        write_Save.write((char*)&nameSize, sizeof(nameSize));
+        write_Save.write(personages[i].name.c_str(), nameSize);
+
+        write_Save.write((char*)&personages[i].hp, sizeof(personages[i].hp));
+        write_Save.write((char*)&personages[i].armor, sizeof(personages[i].armor));
+        write_Save.write((char*)&personages[i].damage, sizeof(personages[i].damage));
+        write_Save.write((char*)&personages[i].killCount, sizeof(personages[i].killCount));
+        write_Save.write((char*)&personages[i].pos.cordX, sizeof(personages[i].pos.cordX));
+        write_Save.write((char*)&personages[i].pos.cordY, sizeof(personages[i].pos.cordY));
     }
 
-    for (int i = 0; i < map.size(); i++){
-        write_Save.write((char*)&map[i], map[i].size());
-    }
-
-    std::cout << std::endl << "Progress is saved, your save name is '" << saveName << "'";
+    std::cout << std::endl << "Progress is saved";
     write_Save.close();
 
+    mapPrint(map, personages[0]);
     std::cout << std::endl << "Now, continue game and enter the which you want to go: ";
     std::cin >> command;
 }
@@ -143,10 +139,33 @@ void loadProgress (std::vector <character>& personages, std::vector <std::vector
         std::cin >> fileName;
         saveF.open(fileName, std::ios::binary);
     }
-    // do the outPut all saveNames
-
+    
+    for (int i = 0; i < personages.size(); i++){
+        int nameSize;
+        saveF.read((char*)&nameSize, sizeof(nameSize));
+        personages[i].name.resize(nameSize);
+        saveF.read((char*)personages[i].name.c_str(), nameSize);
+        saveF.read((char*)&personages[i].hp, sizeof(personages[i].hp));
+        saveF.read((char*)&personages[i].armor, sizeof(personages[i].armor));
+        saveF.read((char*)&personages[i].damage, sizeof(personages[i].damage));
+        saveF.read((char*)&personages[i].killCount, sizeof(personages[i].killCount));
+        saveF.read((char*)&personages[i].pos.cordX, sizeof(personages[i].pos.cordX));
+        saveF.read((char*)&personages[i].pos.cordY, sizeof(personages[i].pos.cordY));
+    }
 
     saveF.close();
+    map.clear();
+    map.resize(20);
+    for (int i = 0; i < 20; i ++){
+        for (int j = 0; j < 20; j++){
+            map[i].push_back (".");
+        }
+    }
+
+    for (int i = 0; i < personages.size(); i ++){
+        map[personages[i].pos.cordY][personages[i].pos.cordX] = personages[i].name;
+    }
+    mapPrint(map, personages[0]);
 
     std::cout << std::endl << "Now, continue game and enter the which you want to go: ";
     std::cin >> command;
@@ -165,7 +184,7 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
                       << "right = d\n"
                       << "(P.s. if u want to save your progress, enter save, or if u want to load your progress, press load)\n" 
                       << "Input nedeed command: ";
-            std::getline(std::cin, command);
+            std::cin >> command;
             std::cout << std::endl;
             if (command == "save") saveProgress(personages, map, command);
                 else if (command == "load") loadProgress(personages, map, command);
