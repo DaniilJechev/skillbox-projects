@@ -297,7 +297,7 @@ void personMoving (std::vector <character>& personages, std::vector <std::vector
                 }
             }
         }
-        command = 1 + std::rand() % 4;
+        side = 1 + std::rand() % 4;
     }
 }
 
