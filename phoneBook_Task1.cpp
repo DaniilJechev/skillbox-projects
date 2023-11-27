@@ -23,7 +23,6 @@ int main ()
         stream >> phoneNum >> name;
         if (phoneNum != "" && name != ""){
             phoneBook.insert(std::pair<std::string, std::string>(phoneNum, name));
-
         }else if (is_num(phoneNum)){
             if (phoneBook.count(phoneNum)) std::cout << std::endl << "Surname: " << phoneBook.at(phoneNum);
                 else std::cout << std::endl << "This name is not listed in your phone book.";
