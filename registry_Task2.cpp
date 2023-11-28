@@ -1,18 +1,6 @@
 #include <iostream>
 #include <map>
 
-bool is_nameInMap (std::string& name, std::map<std::string, int>& queue)
-{   queue[name];
-    for (std::map <std::string, int>::iterator it = queue.begin();
-    it != queue.end(); it++){
-        if (it->first == name){
-                it->second++;
-                return true;
-                break;
-        }
-    }
-    return false;
-}
 
 bool is_num (std::string phoneNum)
 {
@@ -36,8 +24,11 @@ int main()
             }
         }else{
             std::string& name = command;
-            if (!is_nameInMap(name, queue)){
+            if (queue.count(name)){
+                queue.find(name)->second ++;
+            }else{
                 queue[name];
+                queue.find(name)->second++;
             }
         }
     }
