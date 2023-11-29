@@ -24,12 +24,7 @@ int main()
             }
         }else{
             std::string& name = command;
-            if (queue.count(name)){
-                queue.find(name)->second ++;
-            }else{
-                queue[name];
-                queue.find(name)->second++;
-            }
+            queue[name]++;
         }
     }
 }
