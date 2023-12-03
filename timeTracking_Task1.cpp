@@ -27,9 +27,9 @@ int main()
         if (command == "begin"){
             if (cur_task.first != FINISHEDTASK){
                 end_t = std::time(nullptr);
-                cur_task.second = std::difftime(start_t, end_t);
+                cur_task.second = std::difftime(end_t, start_t);
                 finishedTasks.push_back(cur_task);
-                reset_Task(cur_task, end_t, start_t);
+                reset_Task(cur_task, start_t, end_t);
 
                 std::cout << std::endl << "Your last task was replace to folder \"finished Tasks\"";
             }
@@ -37,9 +37,9 @@ int main()
             std::cin >> cur_task.first;
             start_t = std::time(nullptr);
 
-        }else if (command == "end"){
+        }else if (command == "end" && cur_task.first != FINISHEDTASK){
             end_t = std::time(nullptr);
-            cur_task.second = std::difftime(start_t, end_t);
+            cur_task.second = std::difftime(end_t, start_t);
             finishedTasks.push_back(cur_task);
             reset_Task(cur_task, start_t, end_t);
 
