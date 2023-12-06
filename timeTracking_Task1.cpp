@@ -34,7 +34,8 @@ int main()
                 std::cout << std::endl << "Your last task was replace to folder \"finished Tasks\"";
             }
             std::cout << std::endl << "Enter the name of current task: ";
-            std::cin >> cur_task.first;
+            std::cin.ignore();
+            std::getline(std::cin, cur_task.first);
             start_t = std::time(nullptr);
 
         }else if (command == "end" && cur_task.first != FINISHEDTASK){
