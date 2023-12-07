@@ -1,24 +1,23 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include <iomanip>
 
 
 void getBirthday_data (const std::string& name, std::vector<std::pair <std::string, tm*>>& friendsDates)
 {
     std::pair <std::string, tm*> friend_NameBirhday;
     friend_NameBirhday.first = name;
-    time_t cur_time = std::time(nullptr);
-    tm* birthdayDate = std::localtime(&cur_time);
-    std::cout << std::endl << "Enter the day: ";
-    std::cin >> birthdayDate->tm_mday;
-    std::cout << std::endl << "Enter number of mounth: ";
-    std::cin >> birthdayDate->tm_mon;
-    std::cout << std::endl << "Enter ther Year: ";
-    std::cin >> birthdayDate->tm_year;
-    
 
-    friend_NameBirhday.second = birthdayDate;
-    friendsDates.push_back(friend_NameBirhday);
+    time_t cur_time = std::time(nullptr);
+    tm* birthday = std::localtime(&cur_time);
+    std::cout << std::endl << "Enter the date, formate Year:Month:Day" << std::endl;
+    std::cin >> std::get_time(birthday, "%Y:%m:%d");
+    friend_NameBirhday.second = birthday;
+    if (cur_time < (std::time_t)birthday){
+        std::cout << std::endl << "Error data input";
+        getBirthday_data(name, friendsDates);
+    } friendsDates.push_back(friend_NameBirhday);
 }
 
 bool isCloser (const tm* candidateDate, const tm* cur_nearestDate, const tm* cur_date)
@@ -65,11 +64,14 @@ int main()
             else getBirthday_data(userInput, friendsDates);
     }
     
-    std::cout << std::endl << "The nearest birhday/birhdays:";
+    std::cout << std::endl << "The nearest birhday/birhdays:" << std::endl;
     tm* nearest_BirthDay = nearestDate(friendsDates);
 
     for (int i = 0; i < friendsDates.size(); i ++){
-        if (nearest_BirthDay == friendsDates[i].second) std::cout << ' ' << friendsDates[i].first;
+        if (friendsDates[i].second->tm_mon == nearest_BirthDay->tm_mon
+            && friendsDates[i].second->tm_mday == nearest_BirthDay->tm_mday){
+                std::cout << friendsDates[i].first << " Date: " << 
+                std::put_time(friendsDates[i].second, "%m:%d") << std::endl;
+            }
     }
-    std::cout << '.';
 }
