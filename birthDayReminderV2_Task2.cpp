@@ -51,12 +51,21 @@ tm nearestDate(std::vector <inf>& friends)
 
 void showResult(std::vector <inf> friends)
 {
+    time_t t = std::time(nullptr);
+    tm* cur_time = std::localtime(&t);
     tm closerDate = nearestDate(friends);
+    bool is_birthToday = (closerDate.tm_mon == cur_time->tm_mon &&
+                          closerDate.tm_mday == cur_time->tm_mday);
+
     for (int i = 0; i < friends.size(); i ++){
         if (closerDate.tm_mon == friends[i].date.tm_mon &&
             closerDate.tm_mday == friends[i].date.tm_mday){
+                if (is_birthToday){
+                    std::cout << std::endl << "Happy birthday " << friends[i].name << " !!!!";
+                }else{
                 std::cout << std::endl << "Person: " << friends[i].name <<
                              std::endl << "Date: " << friends[i].date.tm_mon + 1 << ':' << friends[i].date.tm_mday;
+                }
             }
     }
 }
