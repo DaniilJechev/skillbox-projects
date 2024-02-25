@@ -16,3 +16,21 @@ target_include_directories(
 )
 
 target_link_libraries(computer cpu disk gpu ram kbd)
+
+set(TARGETS
+        cpu
+        disk
+        gpu
+        kbd
+        ram
+)
+
+foreach (target ${TARGETS})
+    add_executable(${target}_tmp ${target}.cpp)
+    target_include_directories(
+            ${target}_tmp
+            PRIVATE
+            ${CMAKE_SOURCE_DIR}/include
+    )
+
+endforeach()

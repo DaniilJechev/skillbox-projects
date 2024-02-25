@@ -1,6 +1,6 @@
 #pragma once
-#include "vector"
+#include <vector>
 
 using namespace std;
 
-int compute(const vector<int>& buffer);
+void compute(const vector<int>& buffer);

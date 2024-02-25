@@ -3,4 +3,4 @@
 
 using namespace std;
 
-void input(vector<int>& ram);
+void input_nums(vector<int>& ram);
