@@ -5,33 +5,36 @@
 
 using namespace std;
 
-void save (const vector<int>& ram)
+void save (const vector<int>& buffer)
 {
-    if (ram.empty()){
+    if (buffer.empty()){
         cout << "\nOperation ERROR. No data to save.\n";
         return;
     }
     ofstream file ("data.txt");
-    for (int i : ram){
+    for (int i : buffer){
         file << i << " ";
     }
     file.close();
     cout << "\nData saved successfully\n";
 }
 
-void load (vector<int>& ram)
+void load (vector<int>& cur_nums)
 {
     ifstream file ("data.txt");
-    if (file.eof()) {
+
+    if (!file.is_open()){
         cout << "\nOperation ERROR. No data to load.\n";
         return;
     }
-    ram = {};
+    cur_nums.erase(cur_nums.begin(), cur_nums.end());
 
-    while (!file.eof()){
+    file.seekg(0);
+
+    for (int i = 0; i < 8; i ++){
         int tmp;
         file >> tmp;
-        ram.push_back(tmp);
+        cur_nums.push_back(tmp);
     }
 
     file.close();

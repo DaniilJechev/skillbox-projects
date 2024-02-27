@@ -5,8 +5,8 @@ set(TARGETS
         cpu
         disk
         gpu
-        kbd
         ram
+        kbd
 )
 
 foreach (target ${TARGETS})
@@ -20,4 +20,9 @@ foreach (target ${TARGETS})
             CXX_STANDARD 17
             CXX_STANDARD_REQUIRED ON
     )
+
+    if (${target} STREQUAL "kbd")
+        target_link_libraries(kbd ram)
+    endif()
+
 endforeach ()

@@ -3,4 +3,4 @@
 
 using namespace std;
 
-void display(const vector<int>& ram);
+void display(const vector<int>& cur_nums);

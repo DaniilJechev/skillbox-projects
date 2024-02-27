@@ -18,12 +18,14 @@ int main() {
         } else if (input == "save") {
             save(cur_nums);
         } else if (input == "load") {
-            load(cur_nums);
+            load(cur_nums);//error with load
         } else if (input == "input") {
             input_nums(cur_nums);
+        } else if (input == "read"){
+            read(cur_nums);
         } else if (input == "display") {
             display(cur_nums);
-        } else if (input == "exit") {
+        }else if (input == "exit") {
             break;
         }else cout << "\nERROR incorrect input\n";
     }

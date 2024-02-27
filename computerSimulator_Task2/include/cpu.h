@@ -3,4 +3,4 @@
 
 using namespace std;
 
-void compute(const vector<int>& buffer);
+void compute(const vector<int>& cur_nums);

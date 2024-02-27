@@ -3,14 +3,18 @@
 
 using namespace std;
 
-void write (vector<int>& ram, const vector<int>& input)
+int buffer[8];
+
+void write (vector<int>& input)
 {
-    ram = {};
-    for (int i : input) ram.push_back(i);
+    for (int i = 0; i < 8; i ++){
+        buffer[i] = input[i];
+    }
 }
 
-void read (const vector<int>& ram, vector<int>& output)
+void read (vector<int>& output)
 {
-    output = {};
-    for (int i : ram) output.push_back(i);
+    for (int i = 0; i < 8; i ++){
+        output[i] = buffer[i];
+    }
 }

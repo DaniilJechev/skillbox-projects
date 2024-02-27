@@ -3,6 +3,6 @@
 
 using namespace std;
 
-void write (vector<int>& ram);
+void write(vector<int>& input);
 
-void read (vector<int>& ram);
+void read (vector<int>& output);

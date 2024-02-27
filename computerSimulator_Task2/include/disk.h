@@ -3,6 +3,6 @@
 
 using namespace std;
 
-void save (const vector<int>& ram);
+void save (const vector<int>& cur_nums);
 
-void load (vector<int>& ram);
+void load (vector<int>& cur_nums);
