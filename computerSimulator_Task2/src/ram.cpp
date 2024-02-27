@@ -1,20 +1,17 @@
 #include "../include/ram.h"
-#include <vector>
 
 using namespace std;
 
 int buffer[8];
 
-void write (vector<int>& input)
+void write (int* input)
 {
     for (int i = 0; i < 8; i ++){
         buffer[i] = input[i];
     }
 }
 
-void read (vector<int>& output)
+int* read()
 {
-    for (int i = 0; i < 8; i ++){
-        output[i] = buffer[i];
-    }
+    return buffer;
 }

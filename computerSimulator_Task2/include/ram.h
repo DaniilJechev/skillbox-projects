@@ -3,6 +3,8 @@
 
 using namespace std;
 
-void write(vector<int>& input);
+extern int buffer[8];
 
-void read (vector<int>& output);
+void write(int* input);
+
+int* read ();

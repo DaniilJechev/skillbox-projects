@@ -21,8 +21,8 @@ foreach (target ${TARGETS})
             CXX_STANDARD_REQUIRED ON
     )
 
-    if (${target} STREQUAL "kbd")
-        target_link_libraries(kbd ram)
-    endif()
+    if (NOT ${target} STREQUAL "ram")
+        target_link_libraries(${target} PRIVATE ram)
+    endif ()
 
 endforeach ()

@@ -1,25 +1,27 @@
 #include "../include/disk.h"
-#include <vector>
+#include "../include/ram.h"
 #include <fstream>
 #include <iostream>
 
 using namespace std;
 
-void save (const vector<int>& buffer)
+void save ()
 {
-    if (buffer.empty()){
+    if (sizeof(buffer) == 0){
         cout << "\nOperation ERROR. No data to save.\n";
         return;
     }
     ofstream file ("data.txt");
-    for (int i : buffer){
-        file << i << " ";
+
+    for (int i = 0; i < 8; i ++){
+        file << " " << buffer[i];
     }
+
     file.close();
     cout << "\nData saved successfully\n";
 }
 
-void load (vector<int>& cur_nums)
+void load ()
 {
     ifstream file ("data.txt");
 
@@ -27,14 +29,9 @@ void load (vector<int>& cur_nums)
         cout << "\nOperation ERROR. No data to load.\n";
         return;
     }
-    cur_nums.erase(cur_nums.begin(), cur_nums.end());
-
-    file.seekg(0);
 
     for (int i = 0; i < 8; i ++){
-        int tmp;
-        file >> tmp;
-        cur_nums.push_back(tmp);
+        file >> buffer[i];
     }
 
     file.close();

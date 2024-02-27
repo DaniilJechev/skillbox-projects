@@ -8,23 +8,22 @@
 using namespace std;
 
 int main() {
-    vector<int> cur_nums;
     string input;
 
     while (true) {
         cin >> input;
         if (input == "sum") {
-            compute(cur_nums);
+            compute();
         } else if (input == "save") {
-            save(cur_nums);
+            save();
         } else if (input == "load") {
-            load(cur_nums);//error with load
+            load();//error with load
         } else if (input == "input") {
-            input_nums(cur_nums);
+            input_nums();
         } else if (input == "read"){
-            read(cur_nums);
+            read();
         } else if (input == "display") {
-            display(cur_nums);
+            display();
         }else if (input == "exit") {
             break;
         }else cout << "\nERROR incorrect input\n";

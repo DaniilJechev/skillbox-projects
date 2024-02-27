@@ -1,11 +1,13 @@
 #include "../include/gpu.h"
-#include <vector>
+#include "../include/ram.h"
 #include <iostream>
 
 using namespace std;
 
-void display(const vector<int>& cur_nums)
+void display()
 {
-    for (int i : cur_nums) cout << i << " ";
+    for (int i = 0; i < 8; i ++){
+        cout << buffer[i] << " ";
+    }
     cout << endl;
 }

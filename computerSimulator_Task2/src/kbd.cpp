@@ -1,19 +1,16 @@
 #include "../include/kbd.h"
 #include "../include/ram.h"
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-void input_nums(vector<int>& buffer)
+void input_nums()
 {
-    buffer.erase(buffer.begin(), buffer.end());
+    int input[8];
     cout << "\nStart enter nums:\n";
     for (int i = 0; i < 8; i ++){
-        int tmp;
-        cin >> tmp;
-        buffer.push_back(tmp);
+        cin >> input[i];
     }
     cout << "\nEnd enter nums:\n";
-    write(buffer);
+    write(input);
 }
