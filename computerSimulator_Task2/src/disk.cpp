@@ -7,10 +7,6 @@ using namespace std;
 
 void save ()
 {
-    if (sizeof(buffer) == 0){
-        cout << "\nOperation ERROR. No data to save.\n";
-        return;
-    }
     ofstream file ("data.txt");
 
     for (int i = 0; i < 8; i ++){
