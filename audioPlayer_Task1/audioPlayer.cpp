@@ -59,16 +59,17 @@ class Player {
 
   public:
     void setAllTracks() {
-        string name = "track";
+        string name = "track0";
         tm duration;
         tm release;
         for (int i = 0; i < 10; i++) {
+            name.pop_back();
             name.push_back(i + '0');
             allTracks[i].setName(name);
-            name.pop_back();
 
             release.tm_year = 100 + rand() % 25;
             release.tm_yday = rand() % 365;
+            mktime(&release);
             mktime(&release);
             allTracks[i].setRelease(release);
 
@@ -116,13 +117,12 @@ class Player {
 
     void next()
     {
-        string newTrack = "Track0";
+        string newTrack = "Track0"; // mistake
         do{
             newTrack.pop_back();
             newTrack.push_back(rand() % 10 + '0');
         }while (newTrack == curTrack);
-        curTrack = newTrack;
-        play(curTrack);
+        play(newTrack);
     }
 
     void stop()
@@ -162,4 +162,3 @@ int main()
     delete player;
     player = nullptr;
 }
-// add operation "continue"
