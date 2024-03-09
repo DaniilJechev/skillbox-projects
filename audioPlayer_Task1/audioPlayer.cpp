@@ -8,7 +8,7 @@ using namespace std;
 class Track
 {
     string name;
-    tm duration;
+    int duration;
     tm release;
 
   public:
@@ -22,7 +22,7 @@ class Track
         release = value;
     }
 
-    void setDuration(tm value)
+    void setDuration(int value)
     {
         duration = value;
     }
@@ -36,7 +36,7 @@ class Track
         return release;
     }
 
-    tm getDuration()
+    int getDuration()
     {
         return duration;
     }
@@ -60,21 +60,20 @@ class Player {
   public:
     void setAllTracks() {
         string name = "track0";
-        tm duration;
+        int duration;
         tm release;
         for (int i = 0; i < 10; i++) {
             name.pop_back();
             name.push_back(i + '0');
             allTracks[i].setName(name);
 
-            release.tm_year = 100 + rand() % 25;
+            release.tm_year = rand() % 125;
             release.tm_yday = rand() % 365;
             mktime(&release);
             mktime(&release);
             allTracks[i].setRelease(release);
 
-            duration.tm_min = rand() % 4;
-            duration.tm_sec = rand() % 60;
+            duration = 50 + rand() % 200;
             allTracks[i].setDuration(duration);
         }
     }
@@ -91,11 +90,11 @@ class Player {
             is_paused = false;
             int trackNum = atoi(&name[name.size() - 1]);
             tm release = allTracks[trackNum].getRelease();
-            tm duration = allTracks[trackNum].getDuration();
+            int duration = allTracks[trackNum].getDuration();
 
             cout << '\n' << "name: " << name << endl
-                << put_time(&release, "release date: %d:%m:%y") << endl
-                << put_time(&duration, "duration: %M:%S") << endl;
+                << put_time(&release, "release date(day:month:year): %d:%m:%Y") << endl
+                << "duration: " << duration / 60 << ':' << duration % 60 << endl;
         }
     }
 
@@ -103,7 +102,7 @@ class Player {
     {
         if (curTrack != "" && !is_paused) {
             cout << "\nsong is paused\n";
-        }
+        }else cout << "\nnothing to pause\n";
         is_paused = true;
     }
 
@@ -111,13 +110,13 @@ class Player {
     {
         if (curTrack != "" && is_paused){
             cout << "\nsong continues\n";
-        }
+        }else cout << "\nnothing to continue\n";
         is_paused = false;
     }
 
     void next()
     {
-        string newTrack = "Track0"; // mistake
+        string newTrack = "track0"; // mistake
         do{
             newTrack.pop_back();
             newTrack.push_back(rand() % 10 + '0');
@@ -129,7 +128,7 @@ class Player {
     {
         if (curTrack != "") {
             cout << "\nsong is stoped\n";
-        }
+        }else cout << "\nnothing to stop\n";
         curTrack = "";
     }
 };
