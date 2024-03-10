@@ -11,7 +11,7 @@ class Track
     tm release;
 
   public:
-    void setName(string value)
+    void setName(string& value)
     {
         name = value;
     }
@@ -44,16 +44,24 @@ class Track
 
 class Player {
     Track allTracks[10];
-    string curTrack = "";
+    string curTrack;
     bool is_paused = false;
 
   private:
-    bool is_avaliableTrack(string name)
+    bool is_availableTrack(string& name)
     {
         for (int i = 0; i < 10; i ++){
             if (allTracks[i].getName() == name) return true;
         }
         return false;
+    }
+
+    static void randRelease(tm* release){
+        release->tm_year = rand() % 125;
+        release->tm_yday = rand() % 365;
+        release->tm_mon = rand() % 12;
+        release->tm_mday = rand() % 30;
+        mktime(release);
     }
 
   public:
@@ -66,11 +74,7 @@ class Player {
             name.push_back(i + '0');
             allTracks[i].setName(name);
 
-            release.tm_year = rand() % 125;
-            release.tm_yday = rand() % 365;
-            release.tm_mon = rand() % 12;
-            release.tm_mday = rand() % 30;
-            mktime(&release);
+            randRelease(&release);
             allTracks[i].setRelease(release);
 
             duration = 50 + rand() % 200;
@@ -83,7 +87,7 @@ class Player {
         if (name == curTrack){
             cout << "\nTrack is playing now\n";
             return;
-        }else if (!is_avaliableTrack(name)){
+        }else if (!is_availableTrack(name)){
                 cout << "\nTrack not found\n";
         }else{
             curTrack = name;
@@ -100,7 +104,7 @@ class Player {
 
     void pause()
     {
-        if (curTrack != "" && !is_paused) {
+        if (!curTrack.empty() && !is_paused) {
             cout << "\nsong is paused\n";
         }else cout << "\nnothing to pause\n";
         is_paused = true;
@@ -108,7 +112,7 @@ class Player {
 
     void continueTrack()
     {
-        if (curTrack != "" && is_paused){
+        if (!curTrack.empty() && is_paused){
             cout << "\nsong continues\n";
         }else cout << "\nnothing to continue\n";
         is_paused = false;
@@ -126,8 +130,8 @@ class Player {
 
     void stop()
     {
-        if (curTrack != "") {
-            cout << "\nsong is stoped\n";
+        if (!curTrack.empty()) {
+            cout << "\nsong is stopped\n";
         }else cout << "\nnothing to stop\n";
         curTrack = "";
     }
