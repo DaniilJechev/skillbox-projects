@@ -1,6 +1,5 @@
 #include <iostream>
 #include <ctime>
-#include <stdlib.h>
 #include <iomanip>
 
 using namespace std;
@@ -69,7 +68,8 @@ class Player {
 
             release.tm_year = rand() % 125;
             release.tm_yday = rand() % 365;
-            mktime(&release);
+            release.tm_mon = rand() % 12;
+            release.tm_mday = rand() % 30;
             mktime(&release);
             allTracks[i].setRelease(release);
 
