@@ -4,6 +4,10 @@
 
 using namespace std;
 
+enum collor{
+    red, blue, green, yellow
+};
+
 double Pi = 3.14;
 
 struct coords
@@ -16,7 +20,7 @@ class ShapeSample
 {
 protected:
     coords center;
-    string collor = "unknown";
+    int collor = -1;
     double dotLine_len = 0;
     double square = 0;
 
@@ -39,7 +43,7 @@ public:
     explicit Circle(double& inRadius): radius(inRadius)
     {
         assert(inRadius > 0);
-        collor = "red";
+        this->collor = collor::red;
         square = Pi * pow(radius, 2);
         dotLine_len = radius * 2 * 4;
     }
@@ -56,7 +60,7 @@ public:
     explicit Triangle(double& inEdge): edge(inEdge)
     {
         assert(inEdge > 0);
-        collor = "blue";
+        this->collor = collor::blue;
         square = pow(edge, 2) * sqrt(3) / 4;
         dotLine_len = edge * 4;
     }
@@ -72,7 +76,7 @@ public:
     explicit Square(double& inEdge): edge(inEdge)
     {
         assert(inEdge > 0);
-        collor = "green";
+        this->collor = collor::green;
         square = pow(edge, 2);
         dotLine_len = edge * 4;
     }
@@ -90,7 +94,7 @@ public:
         length(inLength), width(inWidth)
     {
         assert(inLength > 0 && inWidth > 0);
-        collor = "yellow";
+        this->collor = collor::yellow;
         square = length * width;
         dotLine_len = length * width;
     }
