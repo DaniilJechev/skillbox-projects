@@ -40,7 +40,7 @@ private:
     double radius = 0;
 
 public:
-    explicit Circle(double& inRadius): radius(inRadius)
+    explicit Circle(double inRadius): radius(inRadius)
     {
         assert(inRadius > 0);
         this->collor = collor::red;
@@ -57,7 +57,7 @@ private:
     double edge = 0;
 
 public:
-    explicit Triangle(double& inEdge): edge(inEdge)
+    explicit Triangle(double inEdge): edge(inEdge)
     {
         assert(inEdge > 0);
         this->collor = collor::blue;
@@ -67,36 +67,35 @@ public:
 };
 
 
-class Square: public ShapeSample
+class Rectangle: public ShapeSample
+{
+protected:
+    double length = 0;
+    double width = 0;
+
+public:
+    Rectangle(double inLength, double inWidth):
+            length(inLength), width(inWidth)
+    {
+        assert(inLength > 0 && inWidth > 0);
+        this->collor = collor::yellow;
+        square = length * width;
+        dotLine_len = length * 2 + width * 2;
+    }
+};
+
+
+class Square: public Rectangle
 {
 private:
     double edge = 0;
 
 public:
-    explicit Square(double& inEdge): edge(inEdge)
+    explicit Square(double inEdge):
+        edge(inEdge), Rectangle(inEdge, inEdge)
     {
         assert(inEdge > 0);
         this->collor = collor::green;
-        square = pow(edge, 2);
-        dotLine_len = edge * 4;
-    }
-};
-
-
-class Rectangle: public ShapeSample
-{
-private:
-    double length = 0;
-    double width = 0;
-
-public:
-    Rectangle(double& inLength, double& inWidth):
-        length(inLength), width(inWidth)
-    {
-        assert(inLength > 0 && inWidth > 0);
-        this->collor = collor::yellow;
-        square = length * width;
-        dotLine_len = length * width;
     }
 };
 
@@ -111,7 +110,7 @@ int main()
             double inRadius = 0;
             cout << "\nEnter radius: ";
             cin >> inRadius;
-            Circle* circle = new Circle(inRadius);
+            auto* circle = new Circle(inRadius);
             circle->showInfo();
             delete circle;
 
@@ -119,7 +118,7 @@ int main()
             double side = 0;
             cout << "\nEnter side length: ";
             cin >> side;
-            Triangle* triangle = new Triangle(side);
+            auto* triangle = new Triangle(side);
             triangle->showInfo();
             delete triangle;
 
@@ -127,7 +126,7 @@ int main()
             double side = 0;
             cout << "\nEnter side length: ";
             cin >> side;
-            Square* square = new Square(side);
+            auto* square = new Square(side);
             square->showInfo();
             delete square;
 
@@ -135,7 +134,7 @@ int main()
             double inLength = 0, inWidth = 0;
             cout << "\nEnter length and width: ";
             cin >> inLength >> inWidth;
-            Rectangle* rectangle = new Rectangle(inLength, inWidth);
+            auto* rectangle = new Rectangle(inLength, inWidth);
             rectangle->showInfo();
             delete rectangle;
 
