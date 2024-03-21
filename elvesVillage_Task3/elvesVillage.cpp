@@ -3,9 +3,20 @@
 
 using namespace std;
 
+string randomName()
+{
+    string name;
+    for (int i = 0; i < 5; i ++){
+        name.push_back((char)(97 + rand() % 26));
+    }
+    return name;
+}
+
+bool rand_decide(){return rand() % 2;}
+
 class Branch{
 private:
-    string elfName;
+    string elfName = "None";
     Branch* parent = nullptr;
     Branch** middleBranches = nullptr;
     int branches_cnt = 0;
@@ -14,8 +25,10 @@ public:
     explicit Branch(Branch* inParent):
         parent(inParent)
     {
-        cout << "\nEnter elf name: ";
-        cin >> elfName;
+        if(rand_decide()){
+            elfName = randomName();
+            cout << "\nname: " << elfName;
+        }
 
         if (this->parent == nullptr){
             branches_cnt = rand() % 2 + 2;
@@ -31,56 +44,90 @@ public:
             delete middleBranches[i];
         }
         delete[] middleBranches;
-        delete parent;
     }
-};
 
-class Tree{
-private:
-    Branch** bigBranches = nullptr;
-    int branches_cnt = 0;
-    
-public:
-    Tree(){
-        branches_cnt = rand() % 3 + 3; // 3-5 big branches
-        bigBranches = new Branch*[branches_cnt];
-        for (int i = 0; i < branches_cnt; ++i){
-            bigBranches[i] = new Branch(nullptr);
+    [[nodiscard]]
+    bool checkName(const string& needFind) const{
+        if (this->elfName == needFind){
+            return true;
+        }else{
+            for (int i = 0; i < branches_cnt; ++i){
+                if (middleBranches[i]->checkName(needFind)) return true;
+            }
         }
+        return false;
     }
 
-    ~Tree(){
-        for (int i = 0; i < branches_cnt; ++i){
-            delete bigBranches[i];
+    [[nodiscard]]
+    string getName() const{
+        return elfName;
+    }
+
+    [[nodiscard]]
+    int getBranchCnt() const{
+        return branches_cnt;
+    }
+
+    [[nodiscard]]
+    static int countCitizens(const Branch* branch){
+        int cnt = 0;
+        if (branch->getName() != "None") cnt++;
+        for (int i = 0; i < branch->getBranchCnt(); ++i){
+            cnt += countCitizens(branch->middleBranches[i]);
         }
-        delete[] bigBranches;
+        return cnt;
     }
-
 };
 
 class Village{
 private:
-    Tree** all_trees = new Tree*[5];
+    Branch** all_BigBranches = nullptr;
+    int branches_cnt = 0;
 
 public:
     Village(){
-        for (int i = 0; i < 5; ++i){
-            all_trees[i] = new Tree();
+        branches_cnt = 15 + rand() % 11;
+        all_BigBranches = new Branch*[branches_cnt];
+        for (int i = 0; i < branches_cnt; ++i){
+            all_BigBranches[i] = new Branch(nullptr);
         }
     }
 
     ~Village(){
         for (int i = 0; i < 5; ++i){
-            delete all_trees[i];
+            delete all_BigBranches[i];
         }
-        delete[] all_trees;
+        delete[] all_BigBranches;
     }
+    
+    [[nodiscard]]
+    Branch* checkElf(const string& needFind) const{
+        for (int i = 0; i < branches_cnt; ++i){
+            if (all_BigBranches[i]->checkName(needFind)){
+                return all_BigBranches[i];
+            }
+        }
+        return nullptr;
+    }
+
 };
 
 int main()
 {
+    string needFind;
     srand(time(nullptr));
+
     auto* village = new Village();
-    cout << "\nEnter ended";
+    cout << "\nDistribution ended";
+    cout << "\nEnter need elf name: ";
+    cin >> needFind;
+    Branch* elfPoint = village->checkElf(needFind);
+    
+    if (elfPoint == nullptr){
+        cout << "\nNo elf in village";
+    }else{
+        cout << "\nNeighbours count: " << Branch::countCitizens(elfPoint);
+    }
+
     delete village;
 }
