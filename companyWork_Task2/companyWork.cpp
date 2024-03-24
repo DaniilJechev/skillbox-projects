@@ -6,13 +6,13 @@
 using namespace std;
 
 void printCString(const char* str){ // different in 1 output symbol cnt between run mode and debug mode
-//    while (*str != '\0'){
-//        cout << *str;
-//        ++str;
-//    }
-    for (int i = 0; str[i] != '\0'; ++i){
-        cout << str[i];
+    while (*str != '\0'){
+        cout << *str;
+        ++str;
     }
+//    for (int i = 0; str[i] != '\0'; ++i){
+//        cout << str[i];
+//    }
 }
 
 char* getRandName()
@@ -36,11 +36,6 @@ public:
 
     ~Worker(){
         delete[] name;
-    }
-
-    [[nodiscard]]
-    char getName() const{
-        return *name;
     }
 
     [[nodiscard]]
@@ -157,6 +152,7 @@ public:
     }
 
 };
+
 
 int main()
 {
