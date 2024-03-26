@@ -1,19 +1,8 @@
 #include <iostream>
 #include <ctime>
 #include <cassert>
-#include <cstring>
 
 using namespace std;
-
-void printCString(const char* str){ // different in 1 output symbol cnt between run mode and debug mode
-    while (*str != '\0'){
-        cout << *str;
-        ++str;
-    }
-//    for (int i = 0; str[i] != '\0'; ++i){
-//        cout << str[i];
-//    }
-}
 
 char* getRandName()
 {
@@ -22,21 +11,30 @@ char* getRandName()
         char randLetter = (char)('a' + rand() % 26);
         name[i] = randLetter;
     }
+    name[5] = '\0';
     return name;
 }
 
-class Worker{
+class People{
 protected:
     char* name = nullptr;
+
+public:
+    explicit People(char* inName):
+            name(inName) {}
+
+    ~People(){
+        delete[] name;
+    }
+
+};
+
+class Worker: public People{
+private:
     char task = '-';
 
 public:
-    explicit Worker(char* inName):
-        name(inName) {}
-
-    ~Worker(){
-        delete[] name;
-    }
+    explicit Worker(char* inName): People(inName) {}
 
     [[nodiscard]]
     char getTask() const{
@@ -45,14 +43,14 @@ public:
 
     void setTask(char inTask){
         this->task = inTask;
-        printCString(name);
+        cout << name;
         cout << " got a task " << task << endl;
     }
 
 };
 
 
-class Manager: public Worker{
+class Manager: public People{
 private:
     Worker** team = nullptr;
     int teamSize = 0;
@@ -65,7 +63,7 @@ private:
 
 public:
     explicit Manager(char* inName, int inTeamSize):
-        teamSize(inTeamSize), Worker(inName)
+        teamSize(inTeamSize), People(inName)
     {
         availableWorkers += teamSize;
         assert(teamSize >= 0);
@@ -90,7 +88,7 @@ public:
 
     void acceptCommand(int command, int managerNum){
         srand(command + managerNum);
-        int needGiveCommand = rand() % availableWorkers + 1;
+        int needGiveCommand = (rand() % availableWorkers) + 1;
         availableWorkers -= needGiveCommand;
 
         for (int i = 0; i < teamSize; i ++){
@@ -105,14 +103,14 @@ public:
 };
 
 
-class Boss: public Worker{
+class Boss: public People{
 private:
     Manager** all_managers = nullptr;
     int managersCnt = 0;
 
 public:
     explicit Boss(char* inName):
-            Worker(inName)
+            People(inName)
     {
         cout << "\nEnter the number of teams (managers): ";
         cin >> managersCnt;
@@ -150,7 +148,6 @@ public:
         }
         cout << "\nAl workers are doing something!";
     }
-
 };
 
 
@@ -161,10 +158,8 @@ int main()
 
     cout << "\nEnter boss name: ";
     cin >> bossName;
-    char* p_bossName = new char[bossName.size()];
-    strcpy(p_bossName, bossName.c_str());
 
-    Boss* boss = new Boss(p_bossName);
+    Boss* boss = new Boss(const_cast<char*>(bossName.c_str()) );
 
     boss->startCommand();
 
