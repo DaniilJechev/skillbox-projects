@@ -158,10 +158,7 @@ int main()
 
     cout << "\nEnter boss name: ";
     cin >> bossName;
-
     Boss* boss = new Boss(const_cast<char*>(bossName.c_str()) );
-
     boss->startCommand();
-
     delete boss;
 }
