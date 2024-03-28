@@ -161,7 +161,6 @@ int main()
     cin >> bossName;
     char* p_bossName = new char[bossName.size() + 1];
     strcpy(p_bossName, bossName.c_str());
-    p_bossName[bossName.size()] = '\0';
 
     Boss* boss = new Boss(p_bossName);
     boss->startCommand();
