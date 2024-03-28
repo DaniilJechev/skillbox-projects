@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include <cassert>
+#include <cstring>
 
 using namespace std;
 
@@ -158,7 +159,11 @@ int main()
 
     cout << "\nEnter boss name: ";
     cin >> bossName;
-    Boss* boss = new Boss(const_cast<char*>(bossName.c_str()) );
+    char* p_bossName = new char[bossName.size() + 1];
+    strcpy(p_bossName, bossName.c_str());
+    p_bossName[bossName.size()] = '\0';
+
+    Boss* boss = new Boss(p_bossName);
     boss->startCommand();
     delete boss;
 }
